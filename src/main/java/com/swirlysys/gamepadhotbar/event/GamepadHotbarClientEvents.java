@@ -16,7 +16,6 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -32,24 +31,24 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.joml.Vector2i;
 
-@EventBusSubscriber(modid = GamepadHotbar.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = GamepadHotbar.MOD_ID, value = Dist.CLIENT)
 public class GamepadHotbarClientEvents {
     private static final ResourceLocation HOTBAR_SPRITE = ResourceLocation.withDefaultNamespace("hud/hotbar");
     private static final ResourceLocation HOTBAR_SELECTION_SPRITE = ResourceLocation.withDefaultNamespace("hud/hotbar_selection");
     private static final ResourceLocation HOTBAR_OFFHAND_LEFT_SPRITE = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left");
     private static final ResourceLocation HOTBAR_OFFHAND_RIGHT_SPRITE = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_right");
-    private static final ResourceLocation HOTBAR_0 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_0");
-    private static final ResourceLocation HOTBAR_1 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_1");
-    private static final ResourceLocation HOTBAR_2 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_2");
-    private static final ResourceLocation HOTBAR_3 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_3");
-    private static final ResourceLocation HOTBAR_4 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_4");
-    private static final ResourceLocation HOTBAR_5 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_5");
-    private static final ResourceLocation HOTBAR_6 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_6");
-    private static final ResourceLocation HOTBAR_7 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "item/hotbar_7");
-    private static final ResourceLocation TAP_HOTBAR_LEFT = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "hud/tap_hotbar_left");
-    private static final ResourceLocation TAP_HOTBAR_UP = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "hud/tap_hotbar_up");
-    private static final ResourceLocation TAP_HOTBAR_RIGHT = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "hud/tap_hotbar_right");
-    private static final ResourceLocation TAP_HOTBAR_DOWN = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MODID, "hud/tap_hotbar_down");
+    private static final ResourceLocation HOTBAR_0 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_0");
+    private static final ResourceLocation HOTBAR_1 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_1");
+    private static final ResourceLocation HOTBAR_2 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_2");
+    private static final ResourceLocation HOTBAR_3 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_3");
+    private static final ResourceLocation HOTBAR_4 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_4");
+    private static final ResourceLocation HOTBAR_5 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_5");
+    private static final ResourceLocation HOTBAR_6 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_6");
+    private static final ResourceLocation HOTBAR_7 = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "item/hotbar_7");
+    private static final ResourceLocation TAP_HOTBAR_LEFT = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "hud/tap_hotbar_left");
+    private static final ResourceLocation TAP_HOTBAR_UP = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "hud/tap_hotbar_up");
+    private static final ResourceLocation TAP_HOTBAR_RIGHT = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "hud/tap_hotbar_right");
+    private static final ResourceLocation TAP_HOTBAR_DOWN = ResourceLocation.fromNamespaceAndPath(GamepadHotbar.MOD_ID, "hud/tap_hotbar_down");
     private static final ResourceLocation HOTBAR_8 = ResourceLocation.withDefaultNamespace("item/empty_slot_sword");
     private static final ResourceLocation HOTBAR_ATTACK_INDICATOR_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace(
             "hud/hotbar_attack_indicator_background"
@@ -103,18 +102,12 @@ public class GamepadHotbarClientEvents {
             guiGraphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y);
         }
     }
-    private static boolean isHovering(Slot slot, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        int x = guiLeft + slot.x;
-        int y = guiTop + slot.y;
-        return mouseX >= x - 1 && mouseX < x + 16 + 1 &&
-                mouseY >= y - 1 && mouseY < y + 16 + 1;
-    }
 
     @SubscribeEvent
-    public static void gamepadHotbarTicks(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         Player player = Minecraft.getInstance().player;
         if (GamepadHotbarClientConfig.GAMEPAD_HOTBAR_TOGGLE.isFalse() || player == null) return;
-
+        if (player.isSpectator()) return;
         int current = player.getInventory().selected;
 
         while (GamepadHotbarModBusEvents.HOTBAR_LEFT.consumeClick())
@@ -135,6 +128,7 @@ public class GamepadHotbarClientEvents {
 
         Entity entity = mc.getCameraEntity();
         if (event.getName() == VanillaGuiLayers.HOTBAR && entity instanceof Player player) {
+            if (player.isSpectator()) return;
             // Vanilla hotbar is not rendered
             event.setCanceled(true);
 
@@ -369,7 +363,6 @@ public class GamepadHotbarClientEvents {
         if (GamepadHotbarClientConfig.GAMEPAD_HOTBAR_TOGGLE.isFalse() || screen.getMenu().getCarried().isEmpty()) return;
 
         GuiGraphics guiGfx = event.getGuiGraphics();
-        Vector2i vec = new Vector2i(event.getMouseX(), event.getMouseY());
 
         // Ensures slot icons are always occupying the same slots on each screen
         int adjuster = 0;
@@ -387,12 +380,7 @@ public class GamepadHotbarClientEvents {
 
             Pair<ResourceLocation, ResourceLocation> pair = iterateSlotIcons(i);
             TextureAtlasSprite texAtlas = Minecraft.getInstance().getTextureAtlas(pair.getFirst()).apply(pair.getSecond());
-            if (isHovering(slot, vec.x, vec.y, screen.getGuiLeft(), screen.getGuiTop()))
-                guiGfx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, FastColor.ABGR32.fromArgb32(1090519040));
-
             guiGfx.blit(slot.x, slot.y, 0, 16, 16, texAtlas);
-            if (isHovering(slot, vec.x, vec.y, screen.getGuiLeft(), screen.getGuiTop()))
-                guiGfx.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, FastColor.ABGR32.fromArgb32(-2130706433));
         }
         guiGfx.pose().popPose();
     }
