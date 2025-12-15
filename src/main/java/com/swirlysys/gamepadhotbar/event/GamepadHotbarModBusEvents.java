@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-@EventBusSubscriber(modid = GamepadHotbar.MODID)
+@EventBusSubscriber(modid = GamepadHotbar.MOD_ID)
 public class GamepadHotbarModBusEvents {
     public static KeyMapping HOTBAR_LEFT;
     public static KeyMapping HOTBAR_RIGHT;
@@ -16,7 +16,7 @@ public class GamepadHotbarModBusEvents {
     public static KeyMapping HOTBAR_WEAPON;
 
     @SubscribeEvent
-    public static void modKeyMappings(RegisterKeyMappingsEvent event) {
+    public static void registerControlBinds(RegisterKeyMappingsEvent event) {
         event.register(HOTBAR_LEFT = new KeyMapping("key.gamepadhotbar.cyclehotbar_0",
                 InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), "key.categories.gamepadhotbar")
         );

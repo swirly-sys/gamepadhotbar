@@ -24,7 +24,7 @@ license="MIT"
 modId="gamepadhotbar" #mandatory
 
 # The version number of the mod
-version="1.21.1-1.0.0" #mandatory
+version="1.21.1-1.0.1" #mandatory
 
 # A display name for the mod
 displayName="Gamepad Hotbar" #mandatory
@@ -46,7 +46,7 @@ logoBlur=false
 authors="swirly-sys" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''Gamepad Hotbar is a mod for Minecraft which makes the HUD hotbar more gamepad friendly by rearranging the slots and adding new control binds.'''
+description='''A mod for Minecraft which makes the HUD hotbar more gamepad friendly by rearranging the slots and adding new control binds.'''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 #[[mixins]]
@@ -76,16 +76,16 @@ description='''Gamepad Hotbar is a mod for Minecraft which makes the HUD hotbar 
     # AFTER - This mod is loaded AFTER the dependency
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT, or SERVER
-    side="BOTH"
+    side="CLIENT"
 
 # Here's another dependency
 [[dependencies.gamepadhotbar]]
     modId="minecraft"
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.21, 1.21.1]"
+    versionRange="[1.21.1]"
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
