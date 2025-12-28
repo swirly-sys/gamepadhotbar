@@ -122,9 +122,19 @@ public class GamepadHotbarClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderHotbar(RenderGuiLayerEvent.Pre event) {
+    public static void onRenderGui(RenderGuiLayerEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         if (GamepadHotbarClientConfig.GAMEPAD_HOTBAR_TOGGLE.isFalse() || mc.options.hideGui) return;
+
+        GuiGraphics guiGfx = event.getGuiGraphics();
+        DeltaTracker parTick = event.getPartialTick();
+
+        // Base variables
+        int screenLeft = 43;
+        int screenRight = guiGfx.guiWidth() - screenLeft;
+        int flipVar1 = 1;
+        int flipVar2 = 0;
+        int scaleVar = GamepadHotbarClientConfig.PAD_X.get();
 
         Entity entity = mc.getCameraEntity();
         if (event.getName() == VanillaGuiLayers.HOTBAR && entity instanceof Player player) {
@@ -134,15 +144,6 @@ public class GamepadHotbarClientEvents {
 
             ItemStack offHand = player.getOffhandItem();
             HumanoidArm offArm = player.getMainArm().getOpposite();
-            GuiGraphics guiGfx = event.getGuiGraphics();
-            DeltaTracker parTick = event.getPartialTick();
-
-            // Base variables
-            int screenLeft = 43;
-            int screenRight = guiGfx.guiWidth() - screenLeft;
-            int flipVar1 = 1;
-            int flipVar2 = 0;
-            int scaleVar = GamepadHotbarClientConfig.PAD_X.get();
 
             // Configuration adjustments
             if (GamepadHotbarClientConfig.MIRROR_MODE.getAsBoolean()) {
@@ -355,6 +356,12 @@ public class GamepadHotbarClientEvents {
                 RenderSystem.disableBlend();
             }
         }
+
+        if (GamepadHotbarClientConfig.LOWER_STATUS.isFalse()) return;
+        if (event.getName() == VanillaGuiLayers.JUMP_METER) guiGfx.pose().translate(0.0F, 24.0F, 0.0F);
+        if (event.getName() == VanillaGuiLayers.SPECTATOR_TOOLTIP) guiGfx.pose().translate(0.0F, -24.0F, 0.0F);
+        if (event.getName() == VanillaGuiLayers.EXPERIENCE_LEVEL) guiGfx.pose().translate(0.0F, 24.0F, 0.0F);
+        if (event.getName() == VanillaGuiLayers.EFFECTS) guiGfx.pose().translate(0.0F, -24.0F, 0.0F);
     }
 
     @SubscribeEvent
